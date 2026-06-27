@@ -696,27 +696,23 @@
     <p style="font-size:13px; color: var(--text-mid); line-height:1.6; margin-bottom:4px;">保費結構影響你<strong style="color:var(--accent-dark)">一輩子</strong>的總支出</p>
     <div class="rate-chart">
       <svg viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg">
-        <!-- Grid lines -->
+        <!-- Axes -->
         <line x1="40" y1="10" x2="40" y2="110" stroke="#EEE" stroke-width="1"/>
         <line x1="40" y1="110" x2="300" y2="110" stroke="#EEE" stroke-width="1"/>
-        <line x1="40" y1="60" x2="300" y2="60" stroke="#EEE" stroke-width="0.5" stroke-dasharray="3"/>
-        <!-- Age 45 marker (~56% of 260px span = x≈186) -->
-        <line x1="186" y1="55" x2="186" y2="115" stroke="#CCC" stroke-width="1" stroke-dasharray="3"/>
-        <text x="178" y="124" font-size="8" fill="#AAA">45歲</text>
-        <!-- Natural rate curve (orange) — steep rise after crossover -->
-        <path d="M40,103 Q100,101 186,65 Q230,38 300,8" fill="none" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Level rate line (green) -->
+        <!-- Natural rate: starts moderate, gentle rise, steep after crossover -->
+        <path d="M40,92 C90,88 140,80 168,65 C196,48 230,22 300,4" fill="none" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Level rate line -->
         <line x1="40" y1="65" x2="300" y2="65" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round"/>
         <!-- Crossover dot -->
-        <circle cx="186" cy="65" r="4" fill="white" stroke="#888" stroke-width="1.5"/>
-        <!-- Labels -->
+        <circle cx="168" cy="65" r="4" fill="white" stroke="#888" stroke-width="1.5"/>
+        <!-- Axis labels -->
         <text x="8" y="114" font-size="9" fill="#999">0歲</text>
         <text x="278" y="114" font-size="9" fill="#999">80歲</text>
         <!-- Annotations -->
-        <text x="232" y="22" font-size="9" fill="#F5A623" font-weight="bold">自然費率</text>
-        <text x="232" y="33" font-size="9" fill="#888">（同業）</text>
-        <text x="218" y="53" font-size="9" fill="#4CAF50" font-weight="bold">平準費率</text>
-        <text x="218" y="63" font-size="9" fill="#888">（富邦）</text>
+        <text x="222" y="18" font-size="9" fill="#F5A623" font-weight="bold">自然費率</text>
+        <text x="222" y="29" font-size="9" fill="#888">（同業）</text>
+        <text x="174" y="53" font-size="9" fill="#4CAF50" font-weight="bold">平準費率</text>
+        <text x="174" y="63" font-size="9" fill="#888">（富邦）</text>
       </svg>
     </div>
     <div class="rate-labels">
@@ -818,14 +814,11 @@ const PIE_SEGMENTS = [
   { key: 'retire', label: '退休', color: '#F5E6A3', emoji: '🌅',
     desc: '從小規劃退休型保單，鎖定最低費率，讓孩子未來不需擔心退休金問題，提前享有財務自由的基礎。' },
 ];
-// Legend display order: left col = pie left side, right col = pie right side
-// Pie clockwise from top: 重大傷病(0), 醫療(1), 長照(2), 壽險(3), 理財(4), 退休(5)
-// Left side of donut (positions going left): 退休(5), 重大傷病(0) → top-left area
-// Actually with 6 equal segments starting top: 
-//   0=top-right, 1=right, 2=bottom-right, 3=bottom-left, 4=left, 5=top-left
-// Left half (3,4,5): 壽險, 理財, 退休  Right half (0,1,2): 重大傷病, 醫療, 長照
-// So legend left col: 退休, 理財, 壽險 / right col: 重大傷病, 醫療, 長照
-const LEGEND_ORDER = ['retire','invest','life','critical','medical','longcare'];
+// Pie clockwise from top: 退休(top-left), 重大傷病(top-right), 醫療(right), 長照(bottom-right), 壽險(bottom-left), 理財(left)
+// Left half of pie: 退休, 理財, 壽險  → left legend column
+// Right half of pie: 重大傷病, 醫療, 長照 → right legend column
+// 2-col grid renders left col first: [退休, 重大傷病, 理財, 醫療, 壽險, 長照]
+const LEGEND_ORDER = ['retire','critical','invest','medical','life','longcare'];
 
 const PLANS = {
   A: {
@@ -1154,7 +1147,7 @@ function updateResult() {
 }
 
 // ── Form Submit ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymSOjuaVWEzTYTaz7ULO79HjSIbrl0S0St4Q9TjCpwdTTamup_tgcgFCQ-oB1PW2ta/exec';
 
 async function submitForm() {
   const name = document.getElementById('fName').value.trim();
