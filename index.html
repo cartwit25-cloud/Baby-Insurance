@@ -685,7 +685,7 @@
 <div class="plan-section">
   <div class="plan-type-toggle">
     <button class="plan-type-btn active" onclick="selectPlanType('A')" id="btnA">重大傷病 ＋ 醫療</button>
-    <button class="plan-type-btn" onclick="selectPlanType('B')" id="btnB">醫療</button>
+    <button class="plan-type-btn" onclick="selectPlanType('B')" id="btnB">終身醫療</button>
   </div>
 
   <div class="plan-cards" id="planCards"></div>
@@ -796,6 +796,10 @@
       <label class="form-label">寶寶預計出生日 <span class="opt">（選填，尚未出生也可先規劃）</span></label>
       <input class="form-input" type="date" id="fBirth">
     </div>
+    <div class="form-group">
+      <label class="form-label">要保人出生年月日 <span class="req">*</span><span class="opt">（爸爸或媽媽）</span></label>
+      <input class="form-input" type="date" id="fOwnerBirth">
+    </div>
 
     <button class="submit-btn" onclick="submitForm()" id="submitBtn">送出需求，請婷雯報價 🍼</button>
 
@@ -822,15 +826,15 @@ const PIE_SEGMENTS = [
   { key: 'critical', label: '重大傷病', color: '#B8D4E8', emoji: '🏥',
     desc: '只要拿到健保署核發的重大傷病卡，就符合理賠標準，涵蓋300項以上疾病（含癌症、慢性精神病等）。一次性給付，不看收據、不限用途，可立刻解決收入中斷的燃眉之急。' },
   { key: 'medical', label: '醫療', color: '#B8DDB8', emoji: '💊',
-    desc: '涵蓋疾病住院、手術、意外傷害與癌症三大面向。\n\n・日額給付：住院期間每日固定領取，用於補償無法上班造成的薪水損失。\n・實支實付：依照實際住院收據核銷，補償住院期間的各項醫療開銷，不浪費每一分保費。' },
+    desc: '涵蓋疾病住院、手術、意外傷害與癌症三大面向。\n・日額給付：住院期間每日定額給付，補償因無法上班造成的薪資損失，讓生病不影響家庭收入。\n・實支實付：依實際收據核銷，補償住院期間的龐大醫療支出，讓你安心選擇更好的醫療品質，不必為費用妥協。' },
   { key: 'longcare', label: '長照', color: '#F5C89A', emoji: '🤲',
-    desc: '當寶寶長大後若面臨長期失能需要照護，每月定期給付照護費用，讓家人不必因照顧而犧牲工作與生活品質。' },
+    desc: '無論是意外、疾病或自然老化，只要面臨長期需要照護的狀況，每月定期給付照護費用。讓家人不必在「陪伴」與「工作」之間兩難，安心守護，無後顧之憂。（需年滿15歲方可規劃）' },
   { key: 'life', label: '壽險', color: '#F2C4CE', emoji: '❤️',
-    desc: '提供身故保障，確保萬一發生不幸，家人能獲得足夠的財務支持，承擔孩子未來的養育責任。' },
+    desc: '爸爸媽媽的身故保障同樣不可忽視。萬一發生不幸，確保家人能獲得足夠的財務支撐，讓孩子的未來、房貸與其他責任都有所依靠。' },
   { key: 'invest', label: '理財', color: '#D4C4E8', emoji: '💰',
     desc: '兼具保障與儲蓄功能，適合為孩子規劃教育基金或未來創業資金，讓保費不只是支出，更是有計畫的累積。' },
   { key: 'retire', label: '退休', color: '#F5E6A3', emoji: '🌅',
-    desc: '從小規劃退休型保單，鎖定最低費率，讓孩子未來不需擔心退休金問題，提前享有財務自由的基礎。' },
+    desc: '爸爸媽媽的退休規劃，越早準備越能放大效益。讓孩子長大後不必成為「三明治族群」，孝順的心不再有經濟壓力。' },
 ];
 // Pie clockwise from top: 退休(top-left), 重大傷病(top-right), 醫療(right), 長照(bottom-right), 壽險(bottom-left), 理財(left)
 // Left half of pie: 退休, 理財, 壽險  → left legend column
@@ -1110,10 +1114,12 @@ async function submitForm() {
   const lineId = document.getElementById('fLine').value.trim();
   const phone4 = document.getElementById('fPhone').value.trim();
   const birth = document.getElementById('fBirth').value;
+  const ownerBirth = document.getElementById('fOwnerBirth').value;
 
   if (!name) { showToast('請填寫您的稱呼'); return; }
   if (!lineId) { showToast('請填寫 Line ID'); return; }
   if (!phone4 || phone4.length !== 4) { showToast('請填寫手機末四碼（4位數字）'); return; }
+  if (!ownerBirth) { showToast('請填寫要保人出生年月日'); return; }
   if (!selectedLevel) { showToast('請先選擇一個方案'); return; }
 
   const btn = document.getElementById('submitBtn');
@@ -1126,7 +1132,8 @@ async function submitForm() {
     lineId,
     phone4,
     babyBirth: birth,
-    planType: selectedPlanType === 'A' ? '重大傷病＋醫療' : '醫療',
+    ownerBirth,
+    planType: selectedPlanType === 'A' ? '重大傷病＋醫療' : '終身醫療',
     planLevel: plan.name,
     waiver: document.getElementById('waiverToggle').checked
   };
