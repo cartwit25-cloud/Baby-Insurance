@@ -321,35 +321,38 @@
   .detail-row .d-label { color: var(--text-light); flex-shrink: 0; margin-right: 8px; }
   .detail-row .d-value { color: var(--text-dark); text-align: right; font-weight: 500; }
 
-  /* Mini pie chart in plan detail */
-  .mini-pie-wrap {
+  /* ── Detail card list ── */
+  .detail-card-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .detail-card-row {
     display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 12px;
-    padding: 12px;
-    background: var(--cream);
-    border-radius: 12px;
+    align-items: stretch;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--white);
+    min-height: 52px;
   }
-  .mini-pie-svg { flex-shrink: 0; }
-  .mini-pie-legend { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-  .mini-pie-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 7px;
-    font-size: 11px;
-    line-height: 1.5;
+  .detail-card-bar { width: 4px; flex-shrink: 0; }
+  .detail-card-body { flex: 1; padding: 10px 12px; }
+  .detail-card-label { font-size: 10px; color: var(--text-light); margin-bottom: 3px; }
+  .detail-card-value { font-size: 12px; font-weight: 600; color: var(--text-dark); line-height: 1.5; }
+  .detail-card-badge {
+    font-size: 10px; padding: 2px 7px;
+    border-radius: 8px; background: var(--accent);
+    color: white; align-self: center; margin-right: 10px; flex-shrink: 0;
   }
-  .mini-pie-dot {
-    width: 9px; height: 9px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 2px;
+  .detail-hosp-row {
+    display: flex; gap: 6px; margin-top: 8px;
   }
-  .mini-pie-row .mp-label { color: var(--text-light); white-space: nowrap; }
-  .mini-pie-row .mp-value { color: var(--text-dark); font-weight: 500; }
+  .detail-hosp-item {
+    flex: 1; text-align: center; border-radius: 10px; padding: 8px 4px;
+  }
+  .detail-hosp-item .dh-label { font-size: 10px; color: var(--text-light); margin-bottom: 3px; }
+  .detail-hosp-item .dh-value { font-size: 15px; font-weight: 700; color: var(--accent-dark); }
 
+  /* Hospital summary (legacy, keep for safety) */
+  .hospital-summary {
 
+  .hospital-summary {
     display: flex;
     gap: 6px;
     margin-top: 10px;
@@ -361,7 +364,23 @@
   .hosp-item .h-label { font-size: 10px; color: var(--text-light); margin-bottom: 2px; }
   .hosp-item .h-value { font-size: 13px; font-weight: 700; color: var(--accent-dark); }
 
-  /* ── Waiver toggle ── */
+  /* ── Landscape / RWD ── */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .header { padding: 20px 20px 16px; }
+    .header-emoji { font-size: 32px; margin-bottom: 4px; }
+    .header h1 { font-size: 18px; }
+    .pie-container { width: 160px; height: 160px; }
+    .plan-cards { display: grid; grid-template-columns: 1fr 1fr; }
+    .section { padding: 16px; }
+  }
+  @media (min-width: 600px) {
+    .plan-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .pie-container { width: 260px; height: 260px; }
+    .header h1 { font-size: 26px; }
+  }
+  @media (min-width: 900px) {
+    body { max-width: 600px; margin: 0 auto; }
+  }
   .waiver-card {
     background: var(--white);
     border-radius: var(--radius);
@@ -699,20 +718,19 @@
         <!-- Axes -->
         <line x1="40" y1="10" x2="40" y2="110" stroke="#EEE" stroke-width="1"/>
         <line x1="40" y1="110" x2="300" y2="110" stroke="#EEE" stroke-width="1"/>
-        <!-- Natural rate: starts moderate, gentle rise, steep after crossover -->
-        <path d="M40,92 C90,88 140,80 168,65 C196,48 230,22 300,4" fill="none" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Single arc: control point calculated for crossover at x=161 -->
+        <path d="M40,75 Q250,70 300,4" fill="none" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
         <!-- Level rate line -->
         <line x1="40" y1="65" x2="300" y2="65" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Crossover dot -->
-        <circle cx="168" cy="65" r="4" fill="white" stroke="#888" stroke-width="1.5"/>
+        <!-- Crossover dot at mathematically correct position -->
+        <circle cx="161.5" cy="65" r="4" fill="white" stroke="#888" stroke-width="1.5"/>
         <!-- Axis labels -->
         <text x="8" y="114" font-size="9" fill="#999">0歲</text>
         <text x="278" y="114" font-size="9" fill="#999">80歲</text>
         <!-- Annotations -->
-        <text x="222" y="18" font-size="9" fill="#F5A623" font-weight="bold">自然費率</text>
-        <text x="222" y="29" font-size="9" fill="#888">（同業）</text>
-        <text x="174" y="53" font-size="9" fill="#4CAF50" font-weight="bold">平準費率</text>
-        <text x="174" y="63" font-size="9" fill="#888">（富邦）</text>
+        <text x="228" y="20" font-size="9" fill="#F5A623" font-weight="bold">自然費率</text>
+        <text x="228" y="31" font-size="9" fill="#888">（同業）</text>
+        <text x="46" y="58" font-size="9" fill="#4CAF50" font-weight="bold">平準費率（富邦）</text>
       </svg>
     </div>
     <div class="rate-labels">
@@ -886,77 +904,44 @@ let selectedPlanType = 'A';
 let selectedLevel = null;
 let activePieKey = null;
 
-// ── Mini Pie Chart for plan detail ──
-function buildMiniPie(plan, isA) {
-  const cx = 55, cy = 55, r = 48, ir = 22;
-  // Segments with their data
-  const segs = isA ? [
-    { color: '#B8D4E8', label: '重大傷病', value: plan.critical },
-    { color: '#B8DDB8', label: '日額/手術', value: plan.daily.replace('日額 2,000/日，', '') },
-    { color: '#A8D8B0', label: '實支實付', value: '病房費 3,000/日｜手術 3,200～400,000/次｜雜費 300,000/次' },
-    { color: '#F2C4CE', label: '意外險', value: plan.accident },
-    { color: '#D4C4E8', label: '癌症險', value: plan.cancer },
-  ] : [
-    { color: '#B8DDB8', label: '手術規劃', value: plan.termNote },
-    { color: '#A8D8B0', label: '日額/手術', value: plan.daily.replace('日額 2,000/日，', '') },
-    { color: '#C8E8C8', label: '實支實付', value: '病房費 3,000/日｜手術 3,200～400,000/次｜雜費 300,000/次' },
-    { color: '#F2C4CE', label: '意外險', value: plan.accident },
-    { color: '#D4C4E8', label: '癌症險', value: plan.cancer },
-  ];
+// ── Detail card list (replaces mini pie) ──
+function buildDetailCards(plan, isA) {
+  const rows = [];
 
-  const n = segs.length;
-  const angle = (2 * Math.PI) / n;
-  let paths = '';
+  if (isA) {
+    rows.push({ color: '#B8D4E8', bg: '#EBF5FF', label: '🏥 重大傷病', value: plan.critical, badge: '終身' });
+  } else {
+    rows.push({ color: '#B8DDB8', bg: '#EBFFF0', label: '⚙️ 手術險規劃', value: plan.termNote });
+  }
+  rows.push({ color: '#B8DDB8', bg: '#EBFFF0', label: '💊 日額 / 手術', value: plan.daily.replace('日額 2,000/日，', '日額 2,000/日\n') });
+  rows.push({ color: '#A8D8B0', bg: '#E8FFF0', label: '🧾 實支實付', value: '病房費 3,000/日\n手術 3,200～400,000/次　雜費 300,000/次' });
+  rows.push({ color: '#F2C4CE', bg: '#FFF0F3', label: '🚑 意外險', value: plan.accident.replace('，', '\n').replace('，', '　').replace('，', '　') });
+  rows.push({ color: '#D4C4E8', bg: '#F5F0FF', label: '🎗️ 癌症險（至95歲）', value: plan.cancer.replace('，', '\n').replace('，', '　').replace('，', '\n') });
 
-  segs.forEach((seg, i) => {
-    const sa = i * angle - Math.PI / 2;
-    const ea = sa + angle;
-    const x1 = cx + r * Math.cos(sa), y1 = cy + r * Math.sin(sa);
-    const x2 = cx + r * Math.cos(ea), y2 = cy + r * Math.sin(ea);
-    const ix1 = cx + ir * Math.cos(sa), iy1 = cy + ir * Math.sin(sa);
-    const ix2 = cx + ir * Math.cos(ea), iy2 = cy + ir * Math.sin(ea);
-    const d = `M${ix1.toFixed(1)},${iy1.toFixed(1)} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 0,1 ${x2.toFixed(1)},${y2.toFixed(1)} L${ix2.toFixed(1)},${iy2.toFixed(1)} A${ir},${ir} 0 0,0 ${ix1.toFixed(1)},${iy1.toFixed(1)}`;
-    paths += `<path d="${d}" fill="${seg.color}" stroke="white" stroke-width="1.5"/>`;
-    // Emoji in segment
-    const ma = sa + angle / 2;
-    const ex = cx + (r * 0.62) * Math.cos(ma);
-    const ey = cy + (r * 0.62) * Math.sin(ma);
-    const emojis = ['🏥','💊','🧾','🚑','🎗️'];
-    const bemojis = ['⚙️','💊','🧾','🚑','🎗️'];
-    const eArr = isA ? emojis : bemojis;
-    paths += `<text x="${ex.toFixed(1)}" y="${ey.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="11">${eArr[i]}</text>`;
-  });
-
-  // Hospital bar at bottom
-  const hospBar = `
-    <div style="display:flex;gap:6px;margin-top:10px">
-      ${['一般住院','意外住院','癌症住院'].map((l,i)=>{
-        const vals = [plan.hosp.general, plan.hosp.accident, plan.hosp.cancer];
-        const colors = ['#B8DDB8','#F2C4CE','#D4C4E8'];
-        return `<div style="flex:1;text-align:center;background:${colors[i]+'44'};border-radius:8px;padding:6px 2px">
-          <div style="font-size:10px;color:#888;margin-bottom:2px">${l}/日</div>
-          <div style="font-size:13px;font-weight:700;color:#2C6E7F">${vals[i]}</div>
-        </div>`;
-      }).join('')}
-    </div>`;
+  const hospColors = ['#B8DDB855','#F2C4CE55','#D4C4E855'];
+  const hospTextColors = ['#2C6E7F','#C0506A','#6A50A0'];
 
   return `
-    <div class="mini-pie-wrap">
-      <svg class="mini-pie-svg" width="110" height="110" viewBox="0 0 110 110">
-        ${paths}
-        <text x="55" y="52" text-anchor="middle" font-size="9" fill="#555" font-family="Noto Sans TC">住院/日</text>
-        <text x="55" y="63" text-anchor="middle" font-size="11" font-weight="bold" fill="#2C6E7F" font-family="Noto Sans TC">${plan.hosp.general}</text>
-      </svg>
-      <div class="mini-pie-legend">
-        ${segs.map(s=>`
-          <div class="mini-pie-row">
-            <div class="mini-pie-dot" style="background:${s.color}"></div>
-            <div><span class="mp-label">${s.label}　</span><span class="mp-value">${s.value}</span></div>
-          </div>`).join('')}
-      </div>
+    <div class="detail-card-list">
+      ${rows.map(r => `
+        <div class="detail-card-row">
+          <div class="detail-card-bar" style="background:${r.color}"></div>
+          <div class="detail-card-body" style="background:${r.bg}">
+            <div class="detail-card-label">${r.label}</div>
+            <div class="detail-card-value">${r.value.replace(/\n/g, '<br>')}</div>
+          </div>
+          ${r.badge ? `<div class="detail-card-badge">${r.badge}</div>` : ''}
+        </div>`).join('')}
     </div>
-    ${hospBar}`;
+    <div class="detail-hosp-row">
+      ${[['一般住院/日', plan.hosp.general],['意外住院/日', plan.hosp.accident],['癌症住院/日', plan.hosp.cancer]].map((h,i) => `
+        <div class="detail-hosp-item" style="background:${hospColors[i]}">
+          <div class="dh-label">${h[0]}</div>
+          <div class="dh-value" style="color:${hospTextColors[i]}">${h[1]}</div>
+        </div>`).join('')}
+    </div>`;
 }
+
 
 // ── Pie Chart ──
 function drawPie() {
@@ -1060,7 +1045,7 @@ function renderPlanCards() {
         查看完整保障 ▼
       </div>
       <div class="plan-detail" id="detail_${level}">
-        ${buildMiniPie(plan, selectedPlanType === 'A')}
+        ${buildDetailCards(plan, selectedPlanType === 'A')}
       </div>
     </div>`;
   }).join('');
@@ -1096,52 +1081,16 @@ function updateResult() {
       <div class="sub">${typeLabel} ${hasWaiver ? '＋ 豁免保費' : ''}</div>
     </div>
 
-    ${isA ? `
-    <div class="result-item critical">
-      <div class="result-item-header">
-        <div class="result-item-title">🏥 重大傷病</div>
-        <div class="result-item-badge">終身</div>
-      </div>
-      <div class="result-grid">
-        <div class="result-grid-item"><div class="rg-label">保障額度</div><div class="rg-value">${plan.critical}</div></div>
-        <div class="result-grid-item"><div class="rg-label">理賠條件</div><div class="rg-value">持健保重大傷病卡即賠</div></div>
-      </div>
-    </div>` : `
-    <div class="result-item medical" style="background: linear-gradient(135deg,#FFF8EB,#FFFBF0)">
-      <div class="result-item-header">
-        <div class="result-item-title">⚙️ 手術險規劃</div>
-      </div>
-      <div class="result-grid">
-        <div class="result-grid-item" style="grid-column:1/-1"><div class="rg-label">規劃方式</div><div class="rg-value">${plan.termNote}</div></div>
-      </div>
-    </div>`}
-
-    <div class="result-item medical">
-      <div class="result-item-header">
-        <div class="result-item-title">💊 醫療保障</div>
-      </div>
-      <div class="result-grid">
-        <div class="result-grid-item" style="grid-column:1/-1"><div class="rg-label">日額/手術</div><div class="rg-value">${plan.daily}</div></div>
-        <div class="result-grid-item" style="grid-column:1/-1"><div class="rg-label">實支實付</div><div class="rg-value">${plan.reimbursement}</div></div>
-        <div class="result-grid-item" style="grid-column:1/-1"><div class="rg-label">意外險</div><div class="rg-value">${plan.accident}</div></div>
-        <div class="result-grid-item" style="grid-column:1/-1"><div class="rg-label">癌症險 (至95歲)</div><div class="rg-value">${plan.cancer}</div></div>
-      </div>
-      <div class="result-hospital-bar">
-        <div class="rhb-item"><div class="rh-label">一般住院/日</div><div class="rh-value">${plan.hosp.general}</div></div>
-        <div class="rhb-item"><div class="rh-label">意外住院/日</div><div class="rh-value">${plan.hosp.accident}</div></div>
-        <div class="rhb-item"><div class="rh-label">癌症住院/日</div><div class="rh-value">${plan.hosp.cancer}</div></div>
-      </div>
-    </div>
+    ${buildDetailCards(plan, isA)}
 
     ${hasWaiver ? `
-    <div class="result-item waiver-r">
-      <div class="result-item-header">
-        <div class="result-item-title">🛡️ 豁免保費</div>
-        <div class="result-item-badge" style="background:#E8A020">已加購</div>
+    <div class="detail-card-row" style="margin-top:8px">
+      <div class="detail-card-bar" style="background:#F5C89A"></div>
+      <div class="detail-card-body" style="background:#FFF8EB">
+        <div class="detail-card-label">🛡️ 豁免保費</div>
+        <div class="detail-card-value">要保人身故、失能或重大疾病<br>30年期間保費全免，保障持續</div>
       </div>
-      <div class="result-grid">
-        <div class="result-grid-item" style="grid-column:1/-1"><div class="rg-label">保障內容</div><div class="rg-value">要保人身故、失能或重大疾病，30年期間保費全免，保障持續</div></div>
-      </div>
+      <div class="detail-card-badge" style="background:#E8A020">已加購</div>
     </div>` : ''}
   `;
 }
