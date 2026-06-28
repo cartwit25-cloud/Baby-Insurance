@@ -332,13 +332,15 @@
     min-height: 52px;
   }
   .detail-card-bar { width: 4px; flex-shrink: 0; }
-  .detail-card-body { flex: 1; padding: 10px 12px; }
+  .detail-card-body { flex: 1; padding: 10px 12px; position: relative; }
   .detail-card-label { font-size: 10px; color: var(--text-light); margin-bottom: 3px; }
   .detail-card-value { font-size: 12px; font-weight: 600; color: var(--text-dark); line-height: 1.5; }
   .detail-card-badge {
+    position: absolute;
+    top: 8px; right: 10px;
     font-size: 10px; padding: 2px 7px;
     border-radius: 8px; background: var(--accent);
-    color: white; align-self: center; margin-right: 10px; flex-shrink: 0;
+    color: white; flex-shrink: 0;
   }
   .detail-hosp-row {
     display: flex; gap: 6px; margin-top: 8px;
@@ -349,9 +351,7 @@
   .detail-hosp-item .dh-label { font-size: 10px; color: var(--text-light); margin-bottom: 3px; }
   .detail-hosp-item .dh-value { font-size: 15px; font-weight: 700; color: var(--accent-dark); }
 
-  /* Hospital summary (legacy, keep for safety) */
-  .hospital-summary {
-
+  /* Hospital summary */
   .hospital-summary {
     display: flex;
     gap: 6px;
@@ -871,7 +871,8 @@ const PLANS = {
   B: {
     eco: {
       name: '小資方案', emoji: '🌱',
-      termNote: '37.5% 定期 ＋ 62.5% 終身',
+      termNote: '1/3 定期 ＋ 2/3 終身',
+      termBadge: '部分終身',
       daily: '日額 2,000/日，定額手術 2,800～294,000/次',
       reimbursement: '病房費 3,000/日，手術 3,200～400,000/次，雜費 300,000/次',
       accident: '身故/失能 100萬，住院 2,000/日，實支 100,000/次，骨折 9,000～240,000',
@@ -880,7 +881,8 @@ const PLANS = {
     },
     basic: {
       name: '基本方案', emoji: '⭐',
-      termNote: '手術險一半終身、一半定期(至90歲)',
+      termNote: '1/2 定期(至90歲) ＋ 1/2 終身',
+      termBadge: '部分終身',
       daily: '日額 2,000/日，定額手術 4,200～420,000/次',
       reimbursement: '病房費 3,000/日，手術 3,200～400,000/次，雜費 300,000/次',
       accident: '身故/失能 200萬，住院 2,000/日，實支 200,000/次，骨折 15,000～400,000',
@@ -889,7 +891,8 @@ const PLANS = {
     },
     comfort: {
       name: '安心方案', emoji: '🌟',
-      termNote: '手術險全部終身保障',
+      termNote: '全終身保障',
+      termBadge: '全終身',
       daily: '日額 2,000/日，定額手術 4,200～420,000/次',
       reimbursement: '病房費 3,000/日，手術 3,200～400,000/次，雜費 300,000/次',
       accident: '身故/失能 200萬，住院 2,000/日，實支 200,000/次，骨折 15,000～400,000',
@@ -910,13 +913,17 @@ function buildDetailCards(plan, isA) {
 
   if (isA) {
     rows.push({ color: '#B8D4E8', bg: '#EBF5FF', label: '🏥 重大傷病', value: plan.critical, badge: '終身' });
+    rows.push({ color: '#B8DDB8', bg: '#EBFFF0', label: '💊 日額 / 手術', value: plan.daily.replace('日額 2,000/日，', '日額 2,000/日\n'), badge: '至90歲' });
+    rows.push({ color: '#A8D8B0', bg: '#E8FFF0', label: '🧾 實支實付', value: '病房費 3,000/日\n手術 3,200～400,000/次　雜費 300,000/次', badge: '至80歲' });
+    rows.push({ color: '#F2C4CE', bg: '#FFF0F3', label: '🚑 意外險', value: plan.accident.replace('，', '\n').replace('，', '　').replace('，', '　'), badge: '至75歲' });
+    rows.push({ color: '#D4C4E8', bg: '#F5F0FF', label: '🎗️ 癌症險', value: plan.cancer.replace('，', '\n').replace('，', '　').replace('，', '\n'), badge: '至95歲' });
   } else {
-    rows.push({ color: '#B8DDB8', bg: '#EBFFF0', label: '⚙️ 手術險規劃', value: plan.termNote });
+    rows.push({ color: '#B8DDB8', bg: '#EBFFF0', label: '⚙️ 手術險規劃', value: plan.termNote, badge: plan.termBadge });
+    rows.push({ color: '#B8DDB8', bg: '#EBFFF0', label: '💊 日額 / 手術', value: plan.daily.replace('日額 2,000/日，', '日額 2,000/日\n'), badge: '至90歲＋終身' });
+    rows.push({ color: '#A8D8B0', bg: '#E8FFF0', label: '🧾 實支實付', value: '病房費 3,000/日\n手術 3,200～400,000/次　雜費 300,000/次', badge: '至80歲' });
+    rows.push({ color: '#F2C4CE', bg: '#FFF0F3', label: '🚑 意外險', value: plan.accident.replace('，', '\n').replace('，', '　').replace('，', '　'), badge: '至75歲' });
+    rows.push({ color: '#D4C4E8', bg: '#F5F0FF', label: '🎗️ 癌症險', value: plan.cancer.replace('，', '\n').replace('，', '　').replace('，', '\n'), badge: '至95歲' });
   }
-  rows.push({ color: '#B8DDB8', bg: '#EBFFF0', label: '💊 日額 / 手術', value: plan.daily.replace('日額 2,000/日，', '日額 2,000/日\n') });
-  rows.push({ color: '#A8D8B0', bg: '#E8FFF0', label: '🧾 實支實付', value: '病房費 3,000/日\n手術 3,200～400,000/次　雜費 300,000/次' });
-  rows.push({ color: '#F2C4CE', bg: '#FFF0F3', label: '🚑 意外險', value: plan.accident.replace('，', '\n').replace('，', '　').replace('，', '　') });
-  rows.push({ color: '#D4C4E8', bg: '#F5F0FF', label: '🎗️ 癌症險（至95歲）', value: plan.cancer.replace('，', '\n').replace('，', '　').replace('，', '\n') });
 
   const hospColors = ['#B8DDB855','#F2C4CE55','#D4C4E855'];
   const hospTextColors = ['#2C6E7F','#C0506A','#6A50A0'];
@@ -929,8 +936,8 @@ function buildDetailCards(plan, isA) {
           <div class="detail-card-body" style="background:${r.bg}">
             <div class="detail-card-label">${r.label}</div>
             <div class="detail-card-value">${r.value.replace(/\n/g, '<br>')}</div>
+            ${r.badge ? `<div class="detail-card-badge">${r.badge}</div>` : ''}
           </div>
-          ${r.badge ? `<div class="detail-card-badge">${r.badge}</div>` : ''}
         </div>`).join('')}
     </div>
     <div class="detail-hosp-row">
